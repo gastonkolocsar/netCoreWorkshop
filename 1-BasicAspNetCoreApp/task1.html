@@ -138,25 +138,32 @@
 <li><p>Type <code>code .</code> to open VS Code for directory. Add .NET Core and Kestrel dependencies to the .csproj file:</p>
 
 <pre><code>&#60;ItemGroup&#62;
-    &#60;PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="1.1.2" /&#62;
+    &#60;PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.0.0" /&#62;
 &#60;/ItemGroup&#62;
 </code></pre></li>
 <li><p>Add ASP.NET Core setup code to the Main method (entry point of all .NET Core applications, including ASP.NET Core) in Program.cs, and remove the console line:</p>
 
 <pre><code>// Minimal ASP.NET setup in Main method
 
-var host = new WebHostBuilder()
-    .UseKestrel()
-    .Configure(app =&gt; app.Run(context =&gt; context.Response.WriteAsync("Hello World!")))
-    .Build();
+static void Main(string[] args)
+{
+	BuildWebHost(args).Run();
+}
 
-host.Run();
+public static IWebHost BuildWebHost(string[] args) =>
+	WebHost.CreateDefaultBuilder(args)
+		.UseKestrel()               
+		.Configure(app => app.Run(context => context.Response.WriteAsync("Hello World!"))) 
+		//.UseStartup<Startup>()                
+		.Build();
 
 
 // NOTE, these are needed and can be added manually, though you can use the IDE (if VS Code + C# extension, or VS)
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore;
 </code></pre>
 
 <p>At this point, you have a minimal ASP.NET Core app set up. Run <code>dotnet restore</code>, then <code>dotnet run</code>. You can navigate to http://localhost:5000 to get a hello world response.</p></li>
@@ -202,11 +209,12 @@ namespace ConsoleApplication
 //  UseIISIntegration specifies IIS as the reverse proxy server.
 .UseIISIntegration() // Reverse proxy using IIS &amp; IIS Express. It does not deal with IServer as Kestrel does. This call configures the port and base path the server should listen on when running behind AspNetCoreModule, and also to capture startup errors.
 
+//Directory will need this using -> using System.IO;
 .UseContentRoot(Directory.GetCurrentDirectory()) //  The server’s content root determines where it searches for content files, like MVC View files. The default content root is the folder from which the application is run.
 </code></pre></li>
 <li><p>You'll need to add this dependency for IIS integration, to the .csproj file:</p>
 
-<pre><code> &#60;PackageReference Include="Microsoft.AspNetCore.Server.IISIntegration" Version="1.1.2" /&#62;
+<pre><code> &#60;PackageReference Include="Microsoft.AspNetCore.Server.IISIntegration" Version="2.0.0" /&#62;
 </code></pre></li>
 </ol>
 
@@ -214,7 +222,7 @@ namespace ConsoleApplication
 <li><p>We're going to add a watcher now so when we change our source files, it rebuilds and re-runs our app. Add this to <code>.csproj</code>:</p>
 
 <pre><code>&#60;ItemGroup&#62;
-	&#60;DotNetCliToolReference Include="Microsoft.DotNet.Watcher.Tools" Version="1.0.1" /&#62;
+	&#60;DotNetCliToolReference Include="Microsoft.DotNet.Watcher.Tools" Version="2.0.0" /&#62;
 &#60;/ItemGroup>
 </code></pre>
 
