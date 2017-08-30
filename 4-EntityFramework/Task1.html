@@ -213,6 +213,77 @@ curl -H "Content-Type: application/json" -X POST -d '{"title":"I Was Posted"}' h
 
 <p>See the end source code in this section to see how it was done, as we do not have step-by-step instructions at this time. </p>
 
+<h2>Example: </h2>
+
+<p>Create a Repositories folder with two classes: ArticleRepository.cs and IArticleRepository.cs. Add the following code</p>
+
+IArticlesRepository.cs
+<p><pre><code>
+using System.Threading.Tasks;
+using ConsoleApplication.Entities;
+using System.Collections.Generic;
+
+
+namespace ConsoleApplication.Repositories
+{
+    public interface IArticlesRepository
+    {
+        Task<List<Article>> GetArticles();
+    }
+}
+</code></pre></p>
+
+ArticlesRepository.cs
+<p><pre><code>
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using ConsoleApplication.Repositories;
+using ConsoleApplication.Data;
+using ConsoleApplication.Entities;
+
+namespace ConsoleApplication.Repositories
+{
+    public class ArticlesRepository : IArticlesRepository
+    {
+        private readonly ArticlesContext _context;
+
+        public ArticlesRepository(ArticlesContext context)
+        {
+            _context = context;
+        }
+
+        public async Task< List < Article > > GetArticles()
+        {            
+            return await _context.Set < Article >().ToListAsync();
+			
+        }
+    }
+}
+</code></pre></p>
+
+Change in ArticlesController.cs
+<p><pre><code>
+private readonly IArticlesRepository _repository;
+
+public ArticlesController(ArticlesContext context, ILogger<ArticlesController> logger, IArticlesRepository repository)
+{
+	_context = context;
+	_logger = logger;
+	_repository = repository;
+}
+...
+public async Task<IActionResult> Get() => Ok(await _repository.GetArticles());
+</code></pre></p>
+
+Add in Startup.cs -> ConfigureServices.cs
+<p><pre><code>
+services.AddTransient < IArticlesRepository, ArticlesRepository > ();
+</code></pre></p>
+
+<p>After this changes, you will have the ArticlesRepository injected in the controller constructor and the DB context isolated inside a repository class.</p>
 
 </article>
   </div>
