@@ -79,7 +79,7 @@
 <ol>
 <li><p>To do that, first add this dependency: </p>
 
-<pre><code>&#60;PackageReference Include="Microsoft.AspNetCore.Diagnostics" Version="1.1.2" /&#62;
+<pre><code>&#60;PackageReference Include="Microsoft.AspNetCore.Diagnostics" Version="2.0.0" /&#62;
 </code></pre></li>
 <li><p>Then add  <code>IHostingEnvironment</code> to the Startup.cs <code>Configure</code> method, and use that object to get the environment. Then add the code to check the environment and add the developer exception page middleware:</p>
 
@@ -109,21 +109,28 @@
 
 <ol>
 <li><p>Add this dependency:</p>
-<pre><code>&#60;PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="1.1.2" /&#62;
+<pre><code>&#60;PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="2.0.0" /&#62;
 </code></pre></li>
 <li><p>Add this namespace to Program.cs:</p>
 <pre><code>using Microsoft.Extensions.Configuration;
 </code></pre></li>
-<li><p>Add this configuration Program.cs's Main method:</p>
+<li><p>Change the BuildWebHost method in Program.cs to this:</p>
 
-<pre><code>var config = new ConfigurationBuilder()  
-    .AddCommandLine(args)
-    .Build();
+<pre><code>public static IWebHost BuildWebHost(string[] args){
+            var config = new ConfigurationBuilder()  
+            .AddCommandLine(args)
+            .Build();
+
+            return WebHost.CreateDefaultBuilder(args)
+                .UseKestrel()                               
+                .UseStartup<Startup>()      
+                .UseIISIntegration()
+                .UseContentRoot(Directory.GetCurrentDirectory())
+                .UseConfiguration(config)
+                .Build();
+        }
 </code></pre></li>
-<li><p>Then add this right before Build() in the WebHostBuilder initialization, so we can use the configuration object we just created: </p>
 
-<pre><code>.UseConfiguration(config)
-</code></pre>
 
 <p>Now you can run <code>dotnet run --environment "production"</code> when you want the hosting environment to be that (or you can use staging, etc or your own).
 Whit this <code>"production"</code> environment parameter you can browse <code>localhost:5000/api/articles</code> to verify that the previous added code inside env.IsDevelopment() is avoided. </p></li>
@@ -139,7 +146,7 @@ Whit this <code>"production"</code> environment parameter you can browse <code>l
 <ol>
 <li><p>Add these dependencies:</p>
 
-<pre><code>&#60;PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="1.1.2" /&#62;
+<pre><code>&#60;PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.0.0" /&#62;
 </code></pre></li>
 <li><p>Navigate to <code>Startup.cs</code> and add this namespace:</p>
 <pre><code>using Microsoft.Extensions.Configuration;
@@ -182,7 +189,7 @@ public Startup(IHostingEnvironment env)
 <ol>
 <li><p>Add the <code>Microsoft.Extensions.Logging.Console</code> package to the <code>csproj</code> file:</p>
 
-<pre><code>&#60;PackageReference Include="Microsoft.Extensions.Logging.Console" Version="1.1.2" /&#62;
+<pre><code>&#60;PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.0.0" /&#62;
 </code></pre></li>
 <li><p>Navigate to <code>Startup.cs</code> and Add this namespace</p>
 <pre><code>using Microsoft.Extensions.Logging;
