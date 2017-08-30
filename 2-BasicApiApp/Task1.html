@@ -68,7 +68,7 @@
 <ol>
 <li><p>Set up MVC! The Web API has been merged into MVC, so it's all one package. Start by adding this dependency for MVC to the csproj.file. You will have to use your IDE to add using statements in the files referenced,</p>
 
-<pre><code>&#60;PackageReference Include="Microsoft.AspNetCore.Mvc" Version="1.1.3"/&#62;
+<pre><code>&#60;PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0"/&#62;
 </code></pre></li>
 <li><p>Add this namespace to the Startup class:</p>
 <pre><code>using Microsoft.Extensions.DependencyInjection;
@@ -134,7 +134,7 @@ namespace ConsoleApplication.Controllers
 
 <li><p>Add the <code>Microsoft.AspNetCore.Mvc.Formatters.Json</code> reference to the .csproj file,</p>
 
-<pre><code>&#60;PackageReference Include="Microsoft.AspNetCore.Mvc.Formatters.Json" Version="1.1.3"/&#62;</code></pre></li>
+<pre><code>&#60;PackageReference Include="Microsoft.AspNetCore.Mvc.Formatters.Json" Version="2.0.0"/&#62;</code></pre></li>
 <li><p>Configure MVC to use the JSON formatter by changing the <code>ConfigureServices</code> in <code>Startup.cs</code> to use the following,</p>
 
 <div class="highlight highlight-source-cs"><pre>public void ConfigureServices(IServiceCollection services)
